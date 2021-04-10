@@ -1,0 +1,4 @@
+sentencepiece
+jieba
+regex
+tensorflow-hub
