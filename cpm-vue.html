@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>一个写作人工智障</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+
+</head>
+
+<body>
+    <div id="app">
+
+        <div class="columns">
+            <div class="column"></div>
+            <div class="column is-one-third">
+                <img src="hero.png" alt="AI">
+                <div class="field">
+                    <label class="label">请输入开头：</label>
+                    <div class="control">
+                        <textarea v-model="input" class="textarea" placeholder="AI构思需要20秒左右哦"></textarea>
+                    </div>
+                </div>
+                <button @click="generate" class="button">续写</button>
+                
+                
+            </div>
+            <div class="column is-one-third">
+                <div class="section">
+                    <progress class="progress is-info" :value="progress" max="100" v-show="showProgress"></progress>
+                </div>
+                
+                <p>{{ result }}</p>
+            </div>
+            <div class="column"></div>
+        </div>
+    </div>
+    <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"
+        integrity="sha256-JLmknTdUZeZZ267LP9qB+/DT7tvxOOKctSKeUC2KT6E=" crossorigin="anonymous"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                input: "",
+                result: "",
+                progress: 0,
+                showProgress: false,
+            },
+            methods: {
+                timing: function () {
+                    this.progress++
+                },
+                generate: function () {
+                    this.result = ""
+                    this.showProgress = true
+                    this.progress = 0
+                    setInterval(this.timing, 200)
+                    axios
+                        .post('http://127.0.0.1:8000/predict', {
+                            "text": this.input
+                        })
+                        .then(response => {
+                            this.result = response.data.result
+                            this.progress = 100
+                            this.showProgress = false
+                        })
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
